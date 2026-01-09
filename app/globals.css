@@ -3,6 +3,9 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  --brand-green: #3E5C2E;
+  --brand-green-hover: #2d4322;
 }
 
 @theme inline {
@@ -10,6 +13,9 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  --color-primary: var(--brand-green);
+  --color-primary-hover: var(--brand-green-hover);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -22,5 +28,4 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
 }
