@@ -1,15 +1,19 @@
 'use client'
-
 import Input from '@/components/Inputs/Input'
 import InputPassword from '@/components/Inputs/InputPassword'
 import LoginLayout from '@/layout/LoginLayout'
 import { Button } from '@/components/Buttons/Button'
-import Image from 'next/image'
-import React, { useState } from 'react'
-import logo from '@/public/img/brand/cooperflow_logo.png';
+import React, { useEffect, useState } from 'react'
 import { useForm } from "react-hook-form";
 import { z } from "zod"
 import { zodResolver } from '@hookform/resolvers/zod'
+import { AuthService } from '@/services/auth.service'
+import Alert from '@/components/Alerts/Alert'
+import { AxiosError } from 'axios'
+import { getAuth, saveAuth } from '@/services/auth.storage'
+import { useRouter } from 'next/navigation'
+import { ROUTES } from '@/constants/paths'
+import Logo from '@/components/Brand/Logo'
 
 type LoginForm = {
     email: string
@@ -23,27 +27,60 @@ export const loginSchema = z.object({
 
 export default function LoginPage() {
     const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<boolean | string>(false);
+    const router = useRouter();
 
     const { register, handleSubmit, formState: { errors } } =
         useForm<LoginForm>({
             resolver: zodResolver(loginSchema)
         })
 
-    const onSubmit = (data: LoginForm) => {
+    const doLogin = async (data: LoginForm) => {
 
         if (isLoading) return
 
-        console.log(data)
+        setIsLoading(true);
+        setError(false);
 
-        setIsLoading(true)
-        console.log('fazendo login...')
+        try {
+
+            const response = await AuthService.login(data)
+            saveAuth(response)
+
+            setTimeout(() => {
+                router.push(ROUTES.dashboard)
+            }, 100)
+
+        } catch (err) {
+            setIsLoading(false);
+
+            let message = 'Houve um erro inesperado ao fazer o login';
+
+            if (err instanceof AxiosError) {
+                const status = err.response?.status;
+                const apiMessage = err.response?.data?.message;
+
+                if (status === 401 && apiMessage) {
+                    message = apiMessage;
+                }
+            }
+
+            setError(message);
+        }
     }
+
+    useEffect(() => {
+        const credentials = getAuth();
+        if(credentials) {
+            router.push(ROUTES.dashboard)
+        }
+    },[])
 
     return (
         <LoginLayout>
             <div>
                 <div className="mb-2">
-                    <Image src={logo} alt="Cooperflow Logo" className="w-36" />
+                    <Logo />
                 </div>
 
                 <div className="mb-8">
@@ -52,7 +89,7 @@ export default function LoginPage() {
                     </span>
                 </div>
 
-                <form onSubmit={handleSubmit(onSubmit)}>
+                <form onSubmit={handleSubmit(doLogin)}>
                     <div className="mb-4">
                         <Input
                             label="E-mail"
@@ -73,6 +110,12 @@ export default function LoginPage() {
                             disabled={isLoading}
                         />
                     </div>
+
+                    {error && (
+                        <div className='mb-4 opacity-0 animate-fade-in-up duration-300'>
+                            <Alert type={'danger'} message={String(error)} />
+                        </div>
+                    )}
 
                     <Button
                         type="submit"

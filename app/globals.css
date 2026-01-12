@@ -6,6 +6,10 @@
 
   --brand-green: #3E5C2E;
   --brand-green-hover: #2d4322;
+
+  --menu: #447BF5;
+  --menu-hover: #cecece59;
+  --menu-active: #b9ddfa;
 }
 
 @theme inline {
@@ -16,6 +20,33 @@
 
   --color-primary: var(--brand-green);
   --color-primary-hover: var(--brand-green-hover);
+
+  --animate-fade-in: fade-in 300ms ease-out forwards;
+  --animate-fade-in-up: fade-in-up 300ms ease-out forwards;
+
+  --color-menu: var(--menu);
+  --color-menu-hover: var(--menu-hover);
+  --color-menu-active: var(--menu-active);
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @media (prefers-color-scheme: dark) {
