@@ -2,7 +2,7 @@ import { ButtonHTMLAttributes } from "react"
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
     variant: "primary" | "secondary" | "danger" | "ghost"
-    isLoading: boolean
+    isLoading?: boolean
 }
 
 export const Button = ({
@@ -28,7 +28,7 @@ export const Button = ({
             disabled={disabled || isLoading}
             className={`
                 inline-flex items-center justify-center gap-2
-                px-2 py-2 rounded-2xl font-medium text-sm
+                px-1 py-2 rounded-2xl font-medium text-sm
                 transition-all duration-200
                 focus:outline-none focus:ring-2
                 disabled:opacity-60 disabled:cursor-not-allowed
